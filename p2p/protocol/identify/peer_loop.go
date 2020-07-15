@@ -124,6 +124,7 @@ func (ph *peerHandler) sendDelta(ctx context.Context) error {
 		return nil
 	}
 
+	log.Infof("sendDelta protos added %v removed", mes.AddedProtocols, mes.RmProtocols)
 	ds, err := ph.openStream(ctx, []string{IDDelta})
 	if err != nil {
 		return fmt.Errorf("failed to open delta stream: %w", err)
@@ -156,6 +157,8 @@ func (ph *peerHandler) sendPush(ctx context.Context) error {
 	ph.snapshotMu.Lock()
 	ph.snapshot = snapshot
 	ph.snapshotMu.Unlock()
+	log.Infof("sendPush to %s protos %v", ph.pid.String(), ph.snapshot.protocols)
+
 	if err := ph.ids.writeChunkedIdentifyMsg(dp.Conn(), snapshot, dp); err != nil {
 		return fmt.Errorf("failed to send push message: %w", err)
 	}

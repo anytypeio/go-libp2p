@@ -44,6 +44,8 @@ func (ids *IDService) deltaHandler(s network.Stream) {
 // consumeDelta processes an incoming delta from a peer, updating the peerstore
 // and emitting the appropriate events.
 func (ids *IDService) consumeDelta(id peer.ID, delta *pb.Delta) error {
+	log.Infof("consumeDelta from %s protos added %v removed", id.String(), delta.GetAddedProtocols(), delta.GetRmProtocols())
+
 	err := ids.Host.Peerstore().AddProtocols(id, delta.GetAddedProtocols()...)
 	if err != nil {
 		return err

@@ -404,6 +404,8 @@ func (ids *IDService) sendIdentifyResp(s network.Stream) {
 
 	ph.snapshotMu.RLock()
 	ids.writeChunkedIdentifyMsg(c, ph.snapshot, s)
+	log.Infof("sendIdentifyResp to %s protos %v", c.RemotePeer(), ph.snapshot.protocols)
+
 	log.Debugf("%s sent message to %s %s", ID, c.RemotePeer(), c.RemoteMultiaddr())
 }
 
@@ -548,6 +550,7 @@ func (ids *IDService) getSignedRecord(snapshot *identifySnapshot) []byte {
 
 func (ids *IDService) consumeMessage(mes *pb.Identify, c network.Conn) {
 	p := c.RemotePeer()
+	log.Infof("consumeMessage from %s protos protos %v, added %v removed %v", p.String(), mes.Protocols, mes.Delta.GetAddedProtocols(), mes.Delta.GetRmProtocols())
 
 	// mes.Protocols
 	ids.Host.Peerstore().SetProtocols(p, mes.Protocols...)
